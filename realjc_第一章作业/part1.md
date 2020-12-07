@@ -23,3 +23,28 @@ $$=\lim_{\varphi \rightarrow 0} \frac{-\varphi^{\wedge}(R^{-1}p)}{\varphi}$$
 $$\lim_{\varphi \rightarrow 0} \frac{(R^{-1}p)^{\wedge}\varphi}{\varphi}\\
 =(R^{-1}p)^{\wedge}$$ 
 
+#### 题2：
+$$\frac{d\ln(R_1R_2^{-1})^{\vee}}{dR_2}$$
+同样采用右扰动模型进行求导。
+扰动$\Delta R$对应的李代数为$\varphi$, 对$\varphi$求导有：
+$$\frac{d\ln(R_1R_2^{-1})^{\vee}}{dR_2} = \lim_{\varphi \rightarrow 0} \frac{\ln(R_1(R_2\exp(\varphi^{\wedge}))^{-1})^{\vee}-\ln(R_1R_2^{-1})^{\vee}}{\varphi} $$
+
+$$= \lim_{\varphi \rightarrow 0} \frac{\ln(R_1\exp(\varphi^{\wedge})^{-1}R_2^{-1})^{\vee}-\ln(R_1R_2^{-1})^{\vee}}{\varphi} $$
+
+$$= \lim_{\varphi \rightarrow 0} \frac{\ln(R_1R_2^{-1}R_2\exp(\varphi^{\wedge})^{-1}R_2^{-1})^{\vee}-\ln(R_1R_2^{-1})^{\vee}}{\varphi} $$
+
+由$SO_3$的伴随性质$R\exp(p^{\wedge})R^T=\exp((Rp)^{\wedge})$有：
+$$\lim_{\varphi \rightarrow 0} \frac{\ln(R_1R_2^{-1}\exp(-R_2\varphi^{\wedge}))^{\vee}-\ln(R_1R_2^{-1})^{\vee}}{\varphi} $$
+
+根据BCH的线性近似：
+$$\ln(\exp(\varphi_1^{\wedge})\exp(\varphi_2^{\wedge})) \approx 
+\begin{cases}
+J_l(\varphi_2)^{-1}\varphi_1+\varphi_2& \varphi_1 \to 0  \\
+J_r(\varphi_1)^{-1}\varphi_2+\varphi_1& \varphi_2 \to 0
+\end{cases}
+$$
+有：
+$$\lim_{\varphi \rightarrow 0} \frac{\ln(R_1R_2^{-1})^{\vee}-J_r^{-1}(\ln(R_1R_2^{-1})^{\vee})(R_2\varphi)-\ln(R_1R_2^{-1})^{\vee}}{\varphi} =\\
+-J_r^{-1}(\ln(R_1R_2^{-1})^{\vee})R_2
+$$
+
