@@ -1,7 +1,63 @@
 
+### 2、四元数和李代数更新
+代码：
+```cpp
+#include <iostream>
+#include<eigen3/Eigen/Core>
+#include<eigen3/Eigen/Geometry>
+#include<ctime>
+#include<random>
+using namespace std;
 
+Eigen::Matrix3d update_by_lie(Eigen::Matrix3d initMatrix, Eigen::Vector3d w )
+{
+    double theta=w.norm();
+    Eigen::Vector3d n_w=w/theta;
+    Eigen::Matrix3d n_w_skew;
+    n_w_skew<<   0,    -n_w(2),    n_w(1),
+		n_w(2),     0,     -n_w(0),
+	       -n_w(1),  n_w(0),      0;
+    Eigen::Matrix3d R_w=cos(theta)*Eigen::Matrix3d::Identity()+(1-cos(theta))*n_w*n_w.transpose()+sin(theta)*n_w_skew;
+    Eigen::Matrix3d rUpdated=initMatrix*R_w;
+    return rUpdated;
+}
 
-### 公式推导
+Eigen::Matrix3d update_by_quat(Eigen::Matrix3d initMatrix, Eigen::Vector3d w )
+{
+    Eigen::Quaterniond q(initMatrix);
+    Eigen::Quaterniond q_w(1,w(0)/2,w(1)/2,w(2)/2);
+    Eigen::Quaterniond q_update=q*q_w;
+    q_update=q_update.normalized();
+    return q_update.toRotationMatrix();
+}
+
+int main(int argc, char **argv) {
+    random_device e; 
+    uniform_real_distribution<double> u(0, 1);
+    Eigen::Vector3d w(0.01,0.02,0.03);
+    Eigen::Matrix3d rUpdated1,rUpdated2;
+    for(int i =0;i<10;i++){
+        double roll =  2*u(e)*M_PI;
+        double yaw = 2*u(e)*M_PI;
+        double pitch = 2*u(e)*M_PI;
+        Eigen::AngleAxisd rollAngle(roll, Eigen::Vector3d::UnitZ());
+        Eigen::AngleAxisd yawAngle(yaw, Eigen::Vector3d::UnitY());
+        Eigen::AngleAxisd pitchAngle(pitch, Eigen::Vector3d::UnitX());
+        Eigen::Quaternion<double> q = rollAngle * yawAngle * pitchAngle;
+        Eigen::Matrix3d initMatrix = q.matrix();
+        rUpdated1 = update_by_lie(initMatrix,w);
+        rUpdated2 = update_by_quat(initMatrix,w);
+        cout<<rUpdated1-rUpdated2<<endl;
+        cout<<endl;
+    }
+    return 0;
+}
+```
+运行结果：
+
+![avatar](./Screenshot%20from%202020-12-10%2000-31-31.png)
+
+### 其他导数
 
 #### 题1：
 
