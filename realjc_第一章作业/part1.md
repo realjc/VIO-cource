@@ -1,4 +1,23 @@
 
+### 1、VIO文献阅读
+- 1.1、视觉与IMU融合的优势
+    - 对于单目相机，与IMU融合可消除其尺度不确定性
+    - IMU虽然有累积误差，但对快速运动也很敏感
+    - 对于视觉SLAM的劣势场景：弱纹理、光照变化、动态环境，IMU可以提供参考位姿
+    - 两者融合后，能够提高定位精度
+- 1.2、常见的视觉+IMU方案
+  - 基于滤波的：MSCKF、ROVIO
+  - 基于优化的：VINS-Mono、okvis
+  - 业界应用：ARKit、Tango、Hololens
+- 1.3、VIO新进展
+  - 基于深度学习的VIO
+    - DeepVIO: Self-supervised Deep Learning of Monocular Visual Inertial Odometry using 3D Geometric Constraints
+      - DeepVIO包括光流估计网络和IMU积分网络、VI融合网络, 直接输出绝对位姿
+    - Unsupervised Monocular Visual-inertial Odometry Network
+      - 学习生成深度图，并构建滑窗优化融合IMU
+
+
+
 ### 2、四元数和李代数更新
 代码：
 ```cpp
