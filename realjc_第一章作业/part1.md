@@ -76,7 +76,7 @@ int main(int argc, char **argv) {
 
 ![avatar](./Screenshot%20from%202020-12-10%2000-31-31.png)
 
-### 其他导数
+### 3、其他导数
 
 #### 题1：
 
