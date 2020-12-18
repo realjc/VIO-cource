@@ -31,4 +31,26 @@ Allen曲线：
 标定结果：
 ![avatar](./IMU2Calib.png)
 Allen曲线：
-![avatar](./IMU2Allen.png)v
+![avatar](./IMU2Allen.png)
+
+#### 2、使用中值积分替换欧拉积分
+中值积分代码：
+```cpp
+// 中值积分
+MotionData last_imupose = imudata[i-1];
+MotionData imupose = imudata[i];
+Eigen::Quaterniond dq;
+Eigen::Vector3d dtheta_half = (last_imupose.imu_gyro+ imupose.imu_gyro)* dt / 4.0;
+dq.w() = 1;
+dq.x() = dtheta_half.x();
+dq.y() = dtheta_half.y();
+dq.z() = dtheta_half.z();
+dq.normalize();
+Eigen::Vector3d acc_w = (Qwb * dq * (imupose.imu_acc) + gw + Qwb * (last_imupose.imu_acc) + gw)/2;
+Qwb = Qwb * dq;
+Pwb = Pwb + Vw * dt + 0.5 * dt * dt * acc_w;
+Vw = Vw + acc_w * dt;
+```
+欧拉积分与中值积分的结果比较：
+![avatar](./euler.png)
+![avatar](./median.png)
