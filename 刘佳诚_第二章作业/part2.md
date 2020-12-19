@@ -54,3 +54,28 @@ Vw = Vw + acc_w * dt;
 欧拉积分与中值积分的结果比较：
 ![avatar](./euler.png)
 ![avatar](./median.png)
+中值积分的结果几乎与Groundtruth重合， 所以中值积分的逼近效果更好。
+### 提升作业
+#### 论文公式推导
+
+k-1次B样条曲线的标准基函数表示为：
+$$p(t)= \sum_{i=0}^n p_iB_{i,k}(t)$$
+其中，$p_i\in \mathbb{R}^{N}$是$t_i$时刻的控制点，$B_{i,k}(t)$是基函数
+$$B_{i,0}(x):=\begin{cases}
+1& if \quad t_i \leq x < t_{i+1} \\
+0& otherwise
+\end{cases}$$
+$$
+B_{i,p}(x):=\frac{x-t_i}{t_{i+p}-t_i}B_{i,p-1}(x)+\frac{t_{i+p+1}-x}{t_{i+p+1}-t_{i+1}}B_{i+1,p-1}(x)
+$$
+
+这里使用的是三次B样条，给定$s_i \leq s(t) < s_{i+1}$, 定义$u(t)=s(t)-s$,得到：
+$$\tilde{B}(u)=C\begin{bmatrix}1\\u\\u^2\\u^3
+\end{bmatrix}, \dot{B}(u)=\frac{1}{\Delta t}C\begin{bmatrix}0\\1\\2u\\3u^2
+\end{bmatrix} ,\ddot{B}(u)=\frac{1}{\Delta t^2}C\begin{bmatrix}0\\0\\2\\6u
+\end{bmatrix}$$
+$$C=\frac{1}{6}\begin{bmatrix}
+6&0&0&0\\5&3&-3&1\\1&3&3&-2\\0&0&0&1
+\end{bmatrix}$$
+则样条轨迹位姿可以表示为：
+$$T_{w,s}(u)=T_{w,i-1}\prod_{j=1}^3 \exp(\tilde{B}(u)_j\Omega_{i+j})$$
