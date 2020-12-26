@@ -317,6 +317,39 @@ bool Problem::IsGoodStepInLM() {
         ni_ *= 2;
         return false;
     }
+
+    // if (rho > 0 && isfinite(tempChi))   
+    // {
+    //     double alpha = 1. - pow((2 * rho - 1), 3);
+    //     alpha = std::min(alpha, 2. / 3.);
+    //     double scaleFactor = (std::max)(1. / 3., alpha);
+    //     currentLambda_ *= scaleFactor;
+    //     ni_ = 2;
+    //     currentChi_ = tempChi;
+    //     return true;
+    // } else {
+    //     currentLambda_ *= ni_;
+    //     ni_ *= 2;
+    //     return false;
+    // }
+
+    // if (rho > 0.0 && isfinite(tempChi))   
+    // {
+    //     if (rho < 0.25) {
+    //         currentLambda_ *= 2;
+    //     }
+    //     else if (rho > 0.75) {
+    //         currentLambda_ /= 3;
+    //     }
+
+    //     currentChi_ = tempChi;
+    //     return true;
+    // } else {
+    //     currentLambda_ *= ni_;
+    //     ni_ *= 2;
+    //     return false;
+    // }
+
 }
 
 /** @brief conjugate gradient with perconditioning
