@@ -24,22 +24,22 @@ jaco_abc << x_ * x_, x_, 1;
 
 
 ### 2、公式推导
-$$f_{15}= \frac{\partial \alpha_{b_ib_{k+1}}}{\partial \delta b^g_k} =\frac{\partial}{\partial \delta b^g_k} \frac{1}{2}(\frac{1}{2}R_{b_ib_k}\exp \{[(w-\delta b^g_k)\delta t]_{\times}\}(a^{b_{k+1}}-b_k^a))\delta t^2 \\ 
-= \frac{1}{4} \delta t^2 \frac{\partial}{\partial \delta b_k^g}R_{b_i b_k}\exp \{ [w\delta t]_{\times}\} \exp \{ [-J_r\delta b_k^g \delta t]_{\times}\}(a^{b_{k+1}}-b^a_k) \\
-= -\frac{1}{4}\delta t^2 \frac{\partial}{\partial \delta b^g_k}R_{b_i b_{k+1}}(a^{b_{k+1}}-b^a_k)_{\times}[-J_r \delta b^g_k \delta t]\\
-\approx \frac{1}{4} \delta t^2 R_{b_i b_{k+1}}(a^{b_{k+1}}-b^a_k)_{\times}\delta t$$
+$$f_{15}= \frac{\partial \alpha_{b_ib_{k+1}}}{\partial \delta b^g_k} =\frac{\partial}{\partial \delta b^g_k} \frac{1}{2}(\frac{1}{2}R_{b_ib_k}\exp \{[(w-\delta b^g_k)\delta t]_{\times}\}(a^{b_{k+1}}-b_k^a))\delta t^2 $$
+$$= \frac{1}{4} \delta t^2 \frac{\partial}{\partial \delta b_k^g}R_{b_i b_k}\exp \{ [w\delta t]_{\times}\} \exp \{ [-J_r\delta b_k^g \delta t]_{\times}\}(a^{b_{k+1}}-b^a_k) $$
+$$= -\frac{1}{4}\delta t^2 \frac{\partial}{\partial \delta b^g_k}R_{b_i b_{k+1}}(a^{b_{k+1}}-b^a_k)_{\times}[-J_r \delta b^g_k \delta t]$$
+$$\approx \frac{1}{4} \delta t^2 R_{b_i b_{k+1}}(a^{b_{k+1}}-b^a_k)_{\times}\delta t$$
 
-$$g_{12} = \frac{\partial\alpha_{b_i b_{k+1}}}{\partial \delta n^g_k}=\frac{\partial}{\partial \delta b^g_k}\frac{1}{2}(\frac{1}{2}R_{b_i b_k}\exp \{ [(w+\frac{1}{2}\delta n^g_k)\delta t]_{\times}\}(a^{b_{k+1}}-b_k^a))\delta t^2 \\
-= \frac{1}{4} \delta t^2 \frac{\partial}{\partial \delta n_k^g}R_{b_i b_k}\exp \{ [w\delta t]_{\times}\} \exp \{ [\frac{1}{2}J_r\delta n_k^g \delta t]_{\times}\}(a^{b_{k+1}}-b^a_k) \\
-= -\frac{1}{4}\delta t^2 \frac{\partial}{\partial \delta n^g_k}R_{b_i b_{k+1}}(a^{b_{k+1}}-b^a_k)_{\times}[\frac{1}{2}J_r \delta n^g_k \delta t] \\
-\approx -\frac{1}{8} \delta t^2 R_{b_i b_{k+1}}(a^{b_{k+1}}-b^a_k)_{\times}\delta t $$
+$$g_{12} = \frac{\partial\alpha_{b_i b_{k+1}}}{\partial \delta n^g_k}=\frac{\partial}{\partial \delta b^g_k}\frac{1}{2}(\frac{1}{2}R_{b_i b_k}\exp \{ [(w+\frac{1}{2}\delta n^g_k)\delta t]_{\times}\}(a^{b_{k+1}}-b_k^a))\delta t^2 $$
+$$= \frac{1}{4} \delta t^2 \frac{\partial}{\partial \delta n_k^g}R_{b_i b_k}\exp \{ [w\delta t]_{\times}\} \exp \{ [\frac{1}{2}J_r\delta n_k^g \delta t]_{\times}\}(a^{b_{k+1}}-b^a_k)$$
+$$= -\frac{1}{4}\delta t^2 \frac{\partial}{\partial \delta n^g_k}R_{b_i b_{k+1}}(a^{b_{k+1}}-b^a_k)_{\times}[\frac{1}{2}J_r \delta n^g_k \delta t]$$
+$$\approx -\frac{1}{8} \delta t^2 R_{b_i b_{k+1}}(a^{b_{k+1}}-b^a_k)_{\times}\delta t $$
 
 ### 3、公式证明
 由
-$$(J^TJ+\mu I)\Delta x_{lm}=-J^Tf \ (V\land V^T+\mu I)\Delta x_{lm}=-J^Tf \\
+$$(J^TJ+\mu I)\Delta x_{lm}=-J^Tf \ (V\land V^T+\mu I)\Delta x_{lm}=-J^Tf
 (V(\land +\mu I)V^T)\Delta x_{lm} =-J^T f $$
 $$ F'=(J^Tf)^T$$
-$$V^T\Delta x_{lm}=-(\land +\mu I)^{-1}V^TF'^T $$
+得：$$V^T\Delta x_{lm}=-(\land +\mu I)^{-1}V^TF'^T $$
 $$\Delta x_{lm}=- V(\land +\mu I)^{-1}V^TF'^T $$
 
 由于$\land +\mu I$为对角阵，
