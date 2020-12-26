@@ -122,4 +122,3 @@ $$
 $$\lim_{\varphi \rightarrow 0} \frac{\ln(R_1R_2^{-1})^{\vee}-J_r^{-1}(\ln(R_1R_2^{-1})^{\vee})(R_2\varphi)-\ln(R_1R_2^{-1})^{\vee}}{\varphi} =\\
 -J_r^{-1}(\ln(R_1R_2^{-1})^{\vee})R_2
 $$
-
