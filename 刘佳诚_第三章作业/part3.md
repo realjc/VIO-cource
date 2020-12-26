@@ -14,13 +14,70 @@ residual_(0) = abc(0)*x_*x_ + abc(1)*x_ + abc(2) - y_;
 jaco_abc << x_ * x_, x_, 1;
 ```
 100个数据的拟合结果：
-![avatar](./iter100.png)
+![avatar](./nums100.png)
 
 可见参数陷入局部最优,增加数据量至1000:
-![avatar](./iter1000.png)
+![avatar](./nums1000.png)
 
 #### 1.3 其他阻尼因子策略
+Marquardt策略：
+![avatar](./marquardt.png)
+```cpp
+if (rho > 0.0 && isfinite(tempChi))  
+{
+    if (rho < 0.25) {
+        currentLambda_ *= 2;
+    }
+    else if (rho > 0.75) {
+        currentLambda_ /= 3;
+    }
 
+    currentChi_ = tempChi;
+    return true;
+} else {
+    currentLambda_ *= ni_;
+    ni_ *= 2;
+    return false;
+}
+```
+论文策略1：
+![avatar](./lm1.png)
+
+```cpp
+if (rho > 0.0 && isfinite(tempChi))
+{
+    currentLambda_ = std::max(currentLambda_/9., 1e-7);
+    currentChi_ = tempChi;
+    return true;
+} else {
+    currentLambda_ = std::min(currentLambda_*11., 1e7);
+    return false;
+}
+```
+
+论文策略2：
+![avatar](./lm2.png)
+
+```cpp
+Eigen::MatrixXd JWfh(1,1);
+JWfh = b_.transpose()*delta_x_;
+double d_JWfh = Jwfh(0,0);
+double alpha = s_JWfh /((currentChi_ - tempChi)/2+2*d_JWfh);
+
+RollbackStates();
+UpdateStates();
+if (rho > 0.0 && isfinite(tempChi))
+{
+    currentLambda_ = std::max(currentLambda_/(1+alpha), 1e-7);
+    currentChi_ = tempChi;
+    return true;
+} else {
+    currentLambda_ += abs(tempChi - currentChi_)/(2*alpha);
+    RollbackStates();
+    return false;
+}
+```
+结果：
 
 
 ### 2、公式推导
@@ -43,7 +100,7 @@ $$ F'=(J^Tf)^T$$
 $$\Delta x_{lm}=- V(\land +\mu I)^{-1}V^TF'^T $$
 
 由于$\land +\mu I$为对角阵，
-$$\land (\mu + \mu I)^{-1}V^T= \begin{bmatrix}
+$$V(\land + \mu I)^{-1}V^T= \begin{bmatrix}
     v_1&v_2& \cdots
 \end{bmatrix} \begin{bmatrix}
     \frac{1}{\lambda_1 + \mu} & & \\
@@ -60,4 +117,4 @@ $$ = \begin{bmatrix}
 = \sum _{i=1}^n \frac{1}{\lambda_i +\mu}v_iv_i^T $$
 
 所以：
-$$\Delta_{lm}=- \sum_{i=1}^n \frac{v_i^TF'^T}{\lambda_i+\mu}v_i$$
+$$\Delta x_{lm}=- \sum_{i=1}^n \frac{v_i^TF'^T}{\lambda_i+\mu}v_i$$
