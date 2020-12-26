@@ -3,6 +3,8 @@
 #### 1.1、绘制阻尼因子变化图像
 阻尼因子lambda随迭代次数变化:
 ![avatar](./lambda.png)
+结果：
+![avatar](./res.png)
 
 #### 1.2 修改曲线方程并完成参数估计
 修改残差函数：
@@ -59,30 +61,10 @@ if (rho > 0.0 && isfinite(tempChi))
 结果：
 ![avatar](./res1.png)
 
-论文策略2：
-![avatar](./lm2.png)
+阻尼系数对比：
+![avatar](./compare.png)
 
-```cpp
-Eigen::MatrixXd JWfh(1,1);
-JWfh = b_.transpose()*delta_x_;
-double d_JWfh = Jwfh(0,0);
-double alpha = s_JWfh /((currentChi_ - tempChi)/2+2*d_JWfh);
-
-RollbackStates();
-UpdateStates();
-if (rho > 0.0 && isfinite(tempChi))
-{
-    currentLambda_ = std::max(currentLambda_/(1+alpha), 1e-7);
-    currentChi_ = tempChi;
-    return true;
-} else {
-    currentLambda_ += abs(tempChi - currentChi_)/(2*alpha);
-    RollbackStates();
-    return false;
-}
-```
-结果：
-
+可以看出，三者的优化结果差别不大，比较明显的是marquardt算法的阻尼系数变化较大，可能是由此造成的振荡使得优化时间比较长。而论文的方法1的阻尼系数一直比较小，效果应该近似于高斯牛顿方法。
 
 ### 2、公式推导
 $$f_{15}= \frac{\partial \alpha_{b_ib_{k+1}}}{\partial \delta b^g_k} =\frac{\partial}{\partial \delta b^g_k} \frac{1}{2}(\frac{1}{2}R_{b_ib_k}\exp \{[(w-\delta b^g_k)\delta t]_{\times}\}(a^{b_{k+1}}-b_k^a))\delta t^2 $$

@@ -133,7 +133,7 @@ bool Problem::Solve(int iterations) {
 
 
     // output lambda date
-    std::ofstream outfile("lambda_set2.txt");
+    std::ofstream outfile("lambda_set.txt");
     for(uint i=0; i<lambda_set.size(); i++)
         outfile << i << " " << lambda_set[i] << endl;
     outfile.close();
@@ -302,47 +302,47 @@ bool Problem::IsGoodStepInLM() {
     }
 
     double scale = 0;
-    //scale = delta_x_.transpose() * (currentLambda_ * delta_x_ + b_);
+    scale = delta_x_.transpose() * (currentLambda_ * delta_x_ + b_);
 
     // scale = delta_x_.transpose() * (currentLambda_ * Hessian_.diagonal()*delta_x_ + b_);
 
 
 
-    Eigen::MatrixXd JWfh(1,1);
-    JWfh = b_.transpose()*delta_x_;
-    double d_JWfh = JWfh(0,0);
-    double alpha = d_JWfh /((currentChi_ - tempChi)/2+2*d_JWfh);
+    // Eigen::MatrixXd JWfh(1,1);
+    // JWfh = b_.transpose()*delta_x_;
+    // double d_JWfh = JWfh(0,0);
+    // double alpha = d_JWfh /((currentChi_ - tempChi)/2+2*d_JWfh);
 
-    delta_x_  *= alpha;
-    scale = (alpha*delta_x_).transpose()*(currentLambda_*delta_x_*alpha+b_);
+    // delta_x_  *= alpha;
+    // scale = (alpha*delta_x_).transpose()*(currentLambda_*delta_x_*alpha+b_);
 
-    scale += 1e-3;    // make sure it's non-zero :)
+    // scale += 1e-3;    // make sure it's non-zero :)
 
-    RollbackStates();
-    UpdateStates();
+    // RollbackStates();
+    // UpdateStates();
     
-    tempChi = 0.0;
-    for (auto edge: edges_) {
-        edge.second->ComputeResidual();
-        tempChi += edge.second->Chi2();
-    }
+    // tempChi = 0.0;
+    // for (auto edge: edges_) {
+    //     edge.second->ComputeResidual();
+    //     tempChi += edge.second->Chi2();
+    // }
 
     double rho = (currentChi_ - tempChi) / scale;
 
-    // if (rho > 0 && isfinite(tempChi))   // last step was good, error goes down
-    // {
-    //     double alpha = 1. - pow((2 * rho - 1), 3);
-    //     alpha = std::min(alpha, 2. / 3.);
-    //     double scaleFactor = (std::max)(1. / 3., alpha);
-    //     currentLambda_ *= scaleFactor;
-    //     ni_ = 2;
-    //     currentChi_ = tempChi;
-    //     return true;
-    // } else {
-    //     currentLambda_ *= ni_;
-    //     ni_ *= 2;
-    //     return false;
-    // }
+    if (rho > 0 && isfinite(tempChi))   // last step was good, error goes down
+    {
+        double alpha = 1. - pow((2 * rho - 1), 3);
+        alpha = std::min(alpha, 2. / 3.);
+        double scaleFactor = (std::max)(1. / 3., alpha);
+        currentLambda_ *= scaleFactor;
+        ni_ = 2;
+        currentChi_ = tempChi;
+        return true;
+    } else {
+        currentLambda_ *= ni_;
+        ni_ *= 2;
+        return false;
+    }
 
 
     // if (rho > 0.0 && isfinite(tempChi))   // last step was good, error goes down
@@ -372,16 +372,16 @@ bool Problem::IsGoodStepInLM() {
     //     return false;
     // }
 
-    if (rho > 0.0 && isfinite(tempChi))
-    {
-        currentLambda_ = std::max(currentLambda_/(1+alpha), 1e-7);
-        currentChi_ = tempChi;
-        return true;
-    } else {
-        currentLambda_ += std::abs(tempChi - currentChi_)/(2*alpha);
-        RollbackStates();
-        return false;
-    }
+    // if (rho > 0.0 && isfinite(tempChi))
+    // {
+    //     currentLambda_ = std::max(currentLambda_/(1+alpha), 1e-7);
+    //     currentChi_ = tempChi;
+    //     return true;
+    // } else {
+    //     currentLambda_ += std::abs(tempChi - currentChi_)/(2*alpha);
+    //     RollbackStates();
+    //     return false;
+    // }
 
 }
 
