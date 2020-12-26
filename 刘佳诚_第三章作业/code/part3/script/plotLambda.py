@@ -14,5 +14,5 @@ ax.set(xlabel='iteration', ylabel='lambda',
        title='lambda change by iterations')
 ax.grid()
 
-fig.savefig("../../lambda.png")
+##fig.savefig("../../lambda.png")
 plt.show()

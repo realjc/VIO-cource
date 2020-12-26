@@ -65,6 +65,7 @@ int main()
     // true parameter
     double a=1.0, b=2.0, c=1.0;
     // number of data
+    //int N = 100;
     int N = 100;
     // variance of data
     double w_sigma= 1.;          

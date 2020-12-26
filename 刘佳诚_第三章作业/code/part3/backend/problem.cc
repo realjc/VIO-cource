@@ -3,7 +3,7 @@
 #include <eigen3/Eigen/Dense>
 #include <glog/logging.h>
 #include "problem.h"
-#include "utils/tic_toc.h"
+#include "../utils/tic_toc.h"
 #include <fstream>
 
 #ifdef USE_OPENMP
@@ -292,7 +292,9 @@ void Problem::RemoveLambdaHessianLM() {
 
 bool Problem::IsGoodStepInLM() {
     double scale = 0;
-    scale = delta_x_.transpose() * (currentLambda_ * delta_x_ + b_);
+    //scale = delta_x_.transpose() * (currentLambda_ * delta_x_ + b_);
+
+    scale = delta_x_.transpose() * (currentLambda_ * Hessian_.diagonal()*delta_x_ + b_);
     scale += 1e-3;    // make sure it's non-zero :)
 
     // recompute residuals after update state
@@ -303,22 +305,8 @@ bool Problem::IsGoodStepInLM() {
     }
 
     double rho = (currentChi_ - tempChi) / scale;
-    if (rho > 0 && isfinite(tempChi))   // last step was good, error goes down
-    {
-        double alpha = 1. - pow((2 * rho - 1), 3);
-        alpha = std::min(alpha, 2. / 3.);
-        double scaleFactor = (std::max)(1. / 3., alpha);
-        currentLambda_ *= scaleFactor;
-        ni_ = 2;
-        currentChi_ = tempChi;
-        return true;
-    } else {
-        currentLambda_ *= ni_;
-        ni_ *= 2;
-        return false;
-    }
 
-    // if (rho > 0 && isfinite(tempChi))   
+    // if (rho > 0 && isfinite(tempChi))   // last step was good, error goes down
     // {
     //     double alpha = 1. - pow((2 * rho - 1), 3);
     //     alpha = std::min(alpha, 2. / 3.);
@@ -333,7 +321,8 @@ bool Problem::IsGoodStepInLM() {
     //     return false;
     // }
 
-    // if (rho > 0.0 && isfinite(tempChi))   
+
+    // if (rho > 0.0 && isfinite(tempChi))   // last step was good, error goes down
     // {
     //     if (rho < 0.25) {
     //         currentLambda_ *= 2;
@@ -349,6 +338,17 @@ bool Problem::IsGoodStepInLM() {
     //     ni_ *= 2;
     //     return false;
     // }
+
+    if (rho > 0.0 && isfinite(tempChi))   // last step was good, error goes down
+    {
+        currentLambda_ = std::max(currentLambda_/9., 1e-7);
+        currentChi_ = tempChi;
+        return true;
+    } else {
+        currentLambda_ = std::min(currentLambda_*11., 1e7);
+        return false;
+    }
+
 
 }
 

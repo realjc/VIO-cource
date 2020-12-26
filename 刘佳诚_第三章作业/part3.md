@@ -13,10 +13,10 @@ residual_(0) = abc(0)*x_*x_ + abc(1)*x_ + abc(2) - y_;
 ```cpp
 jaco_abc << x_ * x_, x_, 1;
 ```
-100次迭代结果：
+100个数据的拟合结果：
 ![avatar](./iter100.png)
 
-可见参数陷入局部最优,增加迭代次数至1000:
+可见参数陷入局部最优,增加数据量至1000:
 ![avatar](./iter1000.png)
 
 #### 1.3 其他阻尼因子策略
@@ -60,4 +60,4 @@ $$ = \begin{bmatrix}
 = \sum _{i=1}^n \frac{1}{\lambda_i +\mu}v_iv_i^T $$
 
 所以：
-$$\Delta_{lm}= \sum_{i=1}^n \frac{v_i^TF'^T}{\lambda_i+\mu}v_i$$
+$$\Delta_{lm}=- \sum_{i=1}^n \frac{v_i^TF'^T}{\lambda_i+\mu}v_i$$
