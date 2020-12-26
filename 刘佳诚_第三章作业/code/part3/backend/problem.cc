@@ -133,7 +133,7 @@ bool Problem::Solve(int iterations) {
 
 
     // output lambda date
-    std::ofstream outfile("lambda_set.txt");
+    std::ofstream outfile("lambda_set2.txt");
     for(uint i=0; i<lambda_set.size(); i++)
         outfile << i << " " << lambda_set[i] << endl;
     outfile.close();
@@ -278,6 +278,7 @@ void Problem::AddLambdatoHessianLM() {
     assert(Hessian_.rows() == Hessian_.cols() && "Hessian is not square");
     for (ulong i = 0; i < size; ++i) {
         Hessian_(i, i) += currentLambda_;
+        //Hessian_(i, i) += currentLambda_ * Hessian_(i, i);
     }
 }
 
@@ -287,18 +288,40 @@ void Problem::RemoveLambdaHessianLM() {
     // TODO:: 这里不应该减去一个，数值的反复加减容易造成数值精度出问题？而应该保存叠加lambda前的值，在这里直接赋值
     for (ulong i = 0; i < size; ++i) {
         Hessian_(i, i) -= currentLambda_;
+         //Hessian_(i, i) /= 1.0 + currentLambda_;
     }
 }
 
 bool Problem::IsGoodStepInLM() {
-    double scale = 0;
-    //scale = delta_x_.transpose() * (currentLambda_ * delta_x_ + b_);
-
-    scale = delta_x_.transpose() * (currentLambda_ * Hessian_.diagonal()*delta_x_ + b_);
-    scale += 1e-3;    // make sure it's non-zero :)
 
     // recompute residuals after update state
     double tempChi = 0.0;
+    for (auto edge: edges_) {
+        edge.second->ComputeResidual();
+        tempChi += edge.second->Chi2();
+    }
+
+    double scale = 0;
+    //scale = delta_x_.transpose() * (currentLambda_ * delta_x_ + b_);
+
+    // scale = delta_x_.transpose() * (currentLambda_ * Hessian_.diagonal()*delta_x_ + b_);
+
+
+
+    Eigen::MatrixXd JWfh(1,1);
+    JWfh = b_.transpose()*delta_x_;
+    double d_JWfh = JWfh(0,0);
+    double alpha = d_JWfh /((currentChi_ - tempChi)/2+2*d_JWfh);
+
+    delta_x_  *= alpha;
+    scale = (alpha*delta_x_).transpose()*(currentLambda_*delta_x_*alpha+b_);
+
+    scale += 1e-3;    // make sure it's non-zero :)
+
+    RollbackStates();
+    UpdateStates();
+    
+    tempChi = 0.0;
     for (auto edge: edges_) {
         edge.second->ComputeResidual();
         tempChi += edge.second->Chi2();
@@ -339,16 +362,26 @@ bool Problem::IsGoodStepInLM() {
     //     return false;
     // }
 
-    if (rho > 0.0 && isfinite(tempChi))   // last step was good, error goes down
+    // if (rho > 0.0 && isfinite(tempChi))   // last step was good, error goes down
+    // {
+    //     currentLambda_ = std::max(currentLambda_/9., 1e-7);
+    //     currentChi_ = tempChi;
+    //     return true;
+    // } else {
+    //     currentLambda_ = std::min(currentLambda_*11., 1e7);
+    //     return false;
+    // }
+
+    if (rho > 0.0 && isfinite(tempChi))
     {
-        currentLambda_ = std::max(currentLambda_/9., 1e-7);
+        currentLambda_ = std::max(currentLambda_/(1+alpha), 1e-7);
         currentChi_ = tempChi;
         return true;
     } else {
-        currentLambda_ = std::min(currentLambda_*11., 1e7);
+        currentLambda_ += std::abs(tempChi - currentChi_)/(2*alpha);
+        RollbackStates();
         return false;
     }
-
 
 }
 

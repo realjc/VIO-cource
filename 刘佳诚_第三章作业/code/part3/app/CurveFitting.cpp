@@ -65,10 +65,10 @@ int main()
     // true parameter
     double a=1.0, b=2.0, c=1.0;
     // number of data
-    //int N = 100;
+    //int N = 1000;
     int N = 100;
     // variance of data
-    double w_sigma= 1.;          
+    double w_sigma= 1;          
     std::default_random_engine generator;
     std::normal_distribution<double> noise(0.,w_sigma);
 

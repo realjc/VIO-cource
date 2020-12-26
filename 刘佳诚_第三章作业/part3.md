@@ -40,6 +40,8 @@ if (rho > 0.0 && isfinite(tempChi))
     return false;
 }
 ```
+结果：
+![avatar](./res0.png)
 论文策略1：
 ![avatar](./lm1.png)
 
@@ -54,6 +56,8 @@ if (rho > 0.0 && isfinite(tempChi))
     return false;
 }
 ```
+结果：
+![avatar](./res1.png)
 
 论文策略2：
 ![avatar](./lm2.png)
