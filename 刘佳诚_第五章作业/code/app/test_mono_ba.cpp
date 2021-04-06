@@ -59,8 +59,49 @@ int main(){
     //构建模型
     Problem problem(Problem::ProblemType::SLAM_PROBLEM);
     
-    vector<shared_ptr<VertexPose> vertexCam(new VertexPose());
-    Eigen::VectorXd pose(7);
+    vector<shared_ptr<VertexPose>> vertexCams_vec;
+    for(size_t i = 0;i<cameras.size();++i){
+        vector<shared_ptr<VertexPose> vertexCam(new VertexPose());
+        Eigen::VectorXd pose(7); // 
+        pose << cameras[i].twc, cameras[i].qwc.x(),cameras[i].qwc.y(),cameras[i].qwc.z(),cameras[i].qwc.w();
+        vertexCam->SetParameters(pose);
+
+        problem.AddVertex(vertexCam);
+        vertexCams_vec.push_back(vertexCam);
+    }
+
+    default_random_engine generator;
+    normal_distribution<double> noise_pdf(0,1);
+    double noise = 0;
+    vector<double> noise_invd;
+    vector<shared_ptr<VertexInverseDepth>> allPoints;
+    for(size_t i=0;i<points.size();i++){
+        Eigen::Vector3d Pw = points[i];
+        Eigen::Vector3d Pc = cameras[0].Rwc.transpose()*(Pw -cameras[0].twc);
+        noise = noise_pdf(generator);
+        shared_ptr<VertexInverseDepth> vertexPoint(new VertexInverseDepth());
+        VecX inv_d(1);
+        inv_d <<inverse_depth;
+        vertexPoint->SetParameters(inv_d);
+        problem.AddVertex(vertexPoint);
+        allPoints.push_back(vertexPoint);
+
+        for(size_t j = 1;j<cameras.size();++j){
+            Eigen::Vector3d pt_i = cameras[0].featurePerId.find(i)->second;
+            Eigen::Vector3d pt_j = cameras[j].featurePerId.find(i)->second;
+            shared_ptr<EdgeReprojection> edge(new EdgeReprojection(pt_i,pt_j));
+            edge->SetTranslationImuFromCamera(qic,tic);
+
+            std::vector<shared_ptr<Vertex>> edge_vertex;
+            edge_vertex.push_back(vertexPoint);
+            edge_vertex.push_back(vertexCams_vec[0]);
+            edge_vertex.push_back(vertexCams_vec[j]);
+            edge->SetVertex(edge_vertex);
+            problem.AddEdge(edge);
+        }
+
+    }
+
     
 
     return 0;
